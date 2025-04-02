@@ -1,4 +1,9 @@
-export class documentPreviewController {
+const pdfjsLib = require ('pdfjs-dist');
+const path = require('path');
+
+pdfjsLib.GlocalWorkerOptions.workerSrc = path.resolve(__dirname, '../../dist/pdf.worker.bundle.js');
+
+export class DocumentPreviewController {
 
     constructor(file){
 
@@ -16,7 +21,7 @@ export class documentPreviewController {
                 case 'image/jpeg':
                 case 'image/jpg':
                 case 'image/gif':
-                let reader = new FileReader();
+                
                 reader.onload = e => {
 
                     s({
@@ -34,7 +39,55 @@ export class documentPreviewController {
                 break;
 
                 case 'application/pdf':
+
+                let reader = new FileReader();
+
+                reader.onload = e => {
+
+                    pdfjsLib.getdocument(new Unit8Array(reader.result)).then(pdf => {
+
+                        pdf.getPage(1).then(page => {
+
+                            let viewport = page.getViewport(1);
+
+                            let canvas = document.createElement('canvas');
+                            let canvasContext = canvas.getContext('2d');
+
+                            canvas.width = viewport.width;
+                            canvas.height = viewport.height;
+
+                            page.render({
+                                canvasContext,
+                                viewport
+                            }).then(()=>{
+
+                                let _s = (pdf.numPages > 1) ? 's' : '';
+
+                                s({
+                                    src: canvas.toDataURL('image/png'),
+                                    info: `${pdf.numPages} página${_s}`
+                                });
+
+                            }).catch(err=>{
+
+                                f(err);
+                            });
+
+                        }).catch(err=>{
+
+                            f(err);
+                        });
+
+                    }).catch(err=>{
+
+                        f(err);
+
+                    });
+                 
+                }
                 
+                reader.readAsArrayBuffer(this._file);
+
                 break;
 
                 default:

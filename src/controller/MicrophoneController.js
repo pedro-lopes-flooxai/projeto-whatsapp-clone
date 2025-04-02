@@ -103,8 +103,8 @@ export class MicrophoneController extends ClassEvent {
         
                 this._recordMicrophoneInterval = setInterval(()=>{
         
-                    this.el.recordMicrophoneTimer.innerHTML = Format.toTime(Date.now() - start);
-        
+                    this.trigger('recordtimer', (Date.now() - start));
+
                 }, 100);
     }
 
