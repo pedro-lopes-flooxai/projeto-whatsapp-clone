@@ -177,10 +177,17 @@ export class WhatsAppController {
             display: 'flex'
         });
 
-        Message.getRef(this._contactActive.chatId).orderBy('timeStamp')
-        .onSnapshot(docs => {
+        this.el.panelMessagesContainer.innerHTML = '';
+
+        Message.getRef(this._contactActive.chatId).orderBy('timeStamp').onSnapshot(docs => {
         
-            this.el.panelMessagesContainer.innerHTML = '';
+            let scrollTop = this.el.panelMessagesContainer.scrollTop;
+            let scrollTopMax =
+            this.el.panelMessagesContainer.scrollheight-
+            this.el.panelMessagesContainer.offsetHeight;
+            let autoScroll = (scrolltop >= scrollTopMAX);
+
+
 
             docs.forEach(doc => {
 
@@ -192,19 +199,33 @@ export class WhatsAppController {
                 if (!this.el.panelMessagesContainer.querySelector('#_' + data.id))
                 {
                     
+               
+
                 let message = new Message();
 
                 message.fromJSON(data);
     
-
                 let me = (data.from === this._user.email);
 
                 let view = message.getViewElement(me);
 
                 this.el.panelMessagesContainer.appendChild(view);
+
                 }
             });
- 
+
+                if (autoScroll) {
+
+                    this.el.panelMessagesContainer.scrollTop = 
+                    (this.el.panelMessagesContainer.scrollheight-
+                    this.el.panelMessagesContainer.offsetHeight);
+
+                } else {
+
+                    this.el.panelMessagesContainer.scrollTop = scrollTop;
+                    
+                }
+
         });
 
     }
@@ -295,6 +316,18 @@ export class WhatsAppController {
     }
 
     initEvents(){
+
+        this.el.inputSearchContacts.on('keyup', e=>{
+
+            if (this.el.inputSearchContacts.values.length > 0) {
+                this.el.inputSearchContactsPlaceholder.hide();
+            } else {
+                this.el.inputSearchContactsPlaceholder.show();
+            }
+
+            this._user.getContacts(this.el.inputSearchContacts.values);
+
+        });
 
         this.el.myPhoto.on('click', e=>{
 
