@@ -1,5 +1,6 @@
 import {Model} from "./Model";
 import { Firebase } from "../util/Firebase";
+import { Format } from "../util/Format";
 
 export class Message extends Model {
 
@@ -7,6 +8,9 @@ export class Message extends Model {
         super();
     }
 
+    get id(){return this._data.id;}
+    set id(value){return this._data.id = value; }
+    
     get content(){return this._data.content;}
     set content(value){return this._data.content = value; }
 
@@ -244,7 +248,7 @@ export class Message extends Model {
 
             default:
                 div.innerHTML = `
-                <div class="font-style _3DFk6 tail">
+                <div class="font-style _3DFk6 tail" Id="_${this.id}">
                         <span class="tail-container"></span>
                         <span class="tail-container highlight"></span>
                         <div class="Tkt2p">
