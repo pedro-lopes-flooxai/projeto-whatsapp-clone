@@ -2,6 +2,7 @@ import {Model} from "./Model";
 import { Firebase } from "../util/Firebase";
 import { Format } from "../util/Format";
 
+
 export class Message extends Model {
 
     constructor(){
@@ -20,8 +21,22 @@ export class Message extends Model {
     get timeStamp(){return this._data.timeStamp;}
     set timeStamp(value){return this._data.timeStamp = value; }
 
-    get status(){return this._data.status;}
-    set status(value){return this._data.status = value; }
+    get preview(){return this._data.preview;}
+    set preview(value){return this._data.preview = value; }
+
+    get fileType(){return this._data.fileType;}
+    set fileType(value){return this._data.fileType = value; }
+
+    get filename(){return this._data.filename;}
+    set filename(value){return this._data.filename = value; }
+
+    get from(){return this._data.from;}
+    set from(value){return this._data.from = value; }
+
+    get size(){return this._data.size;}
+    set size(value){return this._data.size = value; }
+
+   
 
     getViewElement(me = true){
 
@@ -172,6 +187,12 @@ export class Message extends Model {
                 </div>
                 `;
             
+                div.on('click', e=>{
+
+                    window.open(this.content);
+
+                });
+
             break; 
 
             case 'audio':
@@ -294,7 +315,7 @@ export class Message extends Model {
 
     }
 
-    static sendImage(chatId, from, file){
+    static upload(file, from){
 
         return new Promise((s, f)=>{
 
@@ -306,24 +327,89 @@ export class Message extends Model {
      
             }, err => {
      
-             console.error(err);
+             f(err);
      
-            }, ()=>{
+            }, ()=> {
      
-             Message.send(chatId, from, 'image', uploadTask.snapshot.downloadURL ).then(()=>{
+            s(uploadTask.snapshot);
+          
+        });
 
-                s();
 
+    });
+}
+
+    static sendDocument(chatId, from, file, filePreview, info){
+
+        Message.send(chatId, from, 'document').then(msgRef => {
+
+                Message.upload(file, from).then((snapshot)=>{
+    
+                    let downloadFile = snapshot.downloadURL;
+
+                    if (filePreview) {
+    
+                    Message.upload(filePreview, from).then(snapshot2 =>{
+    
+                        let downloadPreview = snapshot2.downloadURL;
+
+                        msgRef.set({
+                            content: downloadFile,
+                            preview: downloadPreview,
+                            filename: file.name,
+                            size: file.size,
+                            fileType: file.type,
+                            status: 'sent',
+                            info
+                        }, {
+                            merge: true
+
+                        });
+                    });
+                } else {
+
+                    msgRef.set({
+                        content: downloadFile,
+                        preview: downloadPreview,
+                        filename: file.name,
+                        size: file.size,
+                        fileType: file.type,
+                        status: 'sent'
+                    }, {
+                        merge: true
+
+                    });
+                }
+         
+            });
+                
+        
+        });
+
+        
+  
+    }
+
+       
+    static sendImage(chatId, from, file){
+
+        return new Promise((s, f)=>{
+
+            Message.upload(file, from).then((snapshot)=>{
+
+                Message.send(
+                    chatId,
+                     from, 
+                     'image',
+                      snapshot.downloadURL 
+                ).then(()=>{
+
+                    s();
+                
              });
      
             });
-            
-     
-       
-
         });
-
-      
   
     }
 
@@ -337,15 +423,18 @@ export class Message extends Model {
             status: 'wait',
             type,
             from
+
         }).then(resul=>{
 
-            result.parent.doc(result.id).set({
+            let docRef = result.parent.doc(result.id);
+
+            docRef.set({
                 status: 'sent'
             }, {
                 merge:true
             }).then(()=>{
 
-                s();
+                s(docRef);
 
             });
 
