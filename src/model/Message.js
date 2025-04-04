@@ -27,14 +27,21 @@ export class Message extends Model {
     get fileType(){return this._data.fileType;}
     set fileType(value){return this._data.fileType = value; }
 
-    get filename(){return this._data.filename;}
-    set filename(value){return this._data.filename = value; }
-
     get from(){return this._data.from;}
     set from(value){return this._data.from = value; }
 
     get size(){return this._data.size;}
     set size(value){return this._data.size = value; }
+
+    get filename(){return this._data.filename;}
+    set filename(value){return this._data.filename = value; }
+
+    get photo(){return this._data.photo;}
+    set photo(value){return this._data.photo = value; }
+
+    get duration(){return this._data.duration;}
+    set duration(value){return this._data.duration = value; }
+
 
    
 
@@ -85,6 +92,17 @@ export class Message extends Model {
 
                     </div>
                 `;
+                if (this.content.photo){
+                    let img = div.querySelector('.photo-contact-sended');
+                    img.src = this.content.photo;
+                    img.show();
+                }
+
+                div.querySelector('.btn-message-send').on('click', e=>{
+
+                    console.log('Enviar mensagem');
+
+                });
             
             break; 
             
@@ -277,6 +295,86 @@ export class Message extends Model {
             </div>
                 
                 `; 
+
+                if (this.photo) {
+
+                    let img = div.querySelctor('.message-photo');
+                    img.src = this.photo;
+                    img.show();
+                }
+
+                let audioEl = div.querySelector('audio');
+                let loadEl = div.querySelector('.audio-load');
+                let btnPlay = div.querySelector('.audio-play');
+                let btnPause = div.querySelector('.audio-pause');
+                let inputRange = div.querySelector('[type=range]');
+                let audioDuration = div.querySelector('.message-audio-duration');
+
+                audioEl.onloadeddata = e => {
+                    
+                    loadEl.hide();
+                    btnPlay.show();
+                };
+
+                audioEl.onplay = e => {
+
+                    btnPlay.hide();
+                    btnPause.show();
+
+                }
+
+                audioEl.onpause = e => {
+                    audioDuration.innerHTML = Format.toTime(this.duration * 1000);
+                    btnPlay.show();
+                    btnPause.hide();
+
+                }
+
+                audioEl.onend = e=> {
+
+                    audioEl.currentTime = 0;
+                }
+
+                audioEl.ontimeupdate = e =>{
+
+                    btnPlay.hide();
+                    btnPause.hide();
+
+                    audioDuration.innerHTML = Format.toTime(audioEl.currentTime * 1000);
+                    inputRange.value = (audioEl.currentTime * 100) / this.duration;
+
+                    if (audioEl.paused) {
+                        btnPlay.show();
+                    } else {    
+                        btnPause.show();
+                    }
+                    
+
+                }
+
+                
+                btnPlay.on('click', e => {
+
+                    audioEl.play();
+
+                });
+
+                btnPause.on('click', e => {
+
+                    audioEl.pause();
+
+                });
+
+                inputRange.on('change', e => {
+
+                    audioEl.currentTime = (inputRange.value * this.duration) / 100;
+
+                });
+
+                
+            
+
+                
             
             break; 
 
@@ -343,6 +441,32 @@ export class Message extends Model {
     static sendContact(chatId, from, contact){
 
         return Message.send(chatId, from, 'contact', contact);
+
+    }
+
+    static sendAudio(chatId, file, metadata, photo){
+
+        return Message.send (chatId, from, 'audio', '').then(msgRef=>{
+
+            Message.upload(file, from).then(snapshot=>{
+
+                let downloadFile = snapshot.downloadURL;
+
+                msgRef.set({
+                    content: downloadFile,
+                    size: file.size,
+                    fileType: file.type,
+                    status: 'sent',
+                    photo,
+                    duration: metadata.duration
+                }, {
+                    merge: true
+
+                });
+
+            });
+
+        })
 
     }
 
