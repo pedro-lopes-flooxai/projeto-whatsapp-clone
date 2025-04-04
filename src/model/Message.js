@@ -42,6 +42,7 @@ export class Message extends Model {
 
         let div = document.createElement('div');
 
+        div.id = `_${this.id}`;
         div.className = 'message';
 
         switch (this.type) { 
@@ -338,6 +339,12 @@ export class Message extends Model {
 
     });
 }
+
+    static sendContact(chatId, from, contact){
+
+        return Message.send(chatId, from, 'contact', contact);
+
+    }
 
     static sendDocument(chatId, from, file, filePreview, info){
 
