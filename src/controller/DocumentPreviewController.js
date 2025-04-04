@@ -1,7 +1,7 @@
 const pdfjsLib = require ('pdfjs-dist');
 const path = require('path');
 
-pdfjsLib.GlocalWorkerOptions.workerSrc = path.resolve(__dirname, '../../dist/pdf.worker.bundle.js');
+pdfjsLib.GlobalWorkerOptions.workerSrc = path.resolve(__dirname, '../../dist/pdf.worker.bundle.js');
 
 export class DocumentPreviewController {
 
@@ -22,6 +22,8 @@ export class DocumentPreviewController {
                 case 'image/jpg':
                 case 'image/gif':
                 
+                let reader = new FileReader();
+
                 reader.onload = e => {
 
                     s({
@@ -29,8 +31,8 @@ export class DocumentPreviewController {
                         info: this._file.name
                     });
 
-                }
-                reader.oneerror = e => {
+                };
+                reader.onerror = e => {
 
                     f(e);
 
@@ -40,15 +42,13 @@ export class DocumentPreviewController {
 
                 case 'application/pdf':
 
-                let reader = new FileReader();
-
                 reader.onload = e => {
 
-                    pdfjsLib.getdocument(new Unit8Array(reader.result)).then(pdf => {
+                    pdfjsLib.getDocument(new Uint8Array(reader.result)).then(pdf => {
 
                         pdf.getPage(1).then(page => {
 
-                            let viewport = page.getViewport(1);
+                            let viewport = page.getViewPort(1);
 
                             let canvas = document.createElement('canvas');
                             let canvasContext = canvas.getContext('2d');

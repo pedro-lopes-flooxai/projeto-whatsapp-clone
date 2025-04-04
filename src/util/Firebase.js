@@ -10,7 +10,7 @@ export class Firebase {
                 //////////firebase////////////
 
         };
-
+        getContactRef
         this.init();
 
     }
@@ -21,7 +21,7 @@ export class Firebase {
             firebase.initialize(this._config);
 
             firebase.firestore().settings({
-                timestampInSnapshot: true
+                timestampsInSnapshots: true
 
         });
             window._initializedFirebase = true;
@@ -49,7 +49,7 @@ export class Firebase {
         
             .then(result=>{
                 
-                let token = result.creedential.acessToken;
+                let token = result.credential.accessToken;
                 let user = result.user;
                 
                 s({

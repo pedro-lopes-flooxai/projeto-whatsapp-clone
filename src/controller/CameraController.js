@@ -20,7 +20,7 @@ constructor(videoEl){
 
     stop(){
 
-        this.stream.getTracks().forEach(tracks=>{
+        this._stream.getTracks().forEach(tracks=>{
             tracks.stop();
         });
     }

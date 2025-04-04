@@ -75,7 +75,7 @@ export class WhatsAppController {
 
        
 
-        this._user.on('contactscharge', docs =>{
+        this._user.on('contactschange', docs =>{
 
             this.el.contactsMessagesList.innerHTML = '';
 
