@@ -115,6 +115,18 @@ export class Message extends Model {
                     </div>
                 
                 `;
+
+                div.querySelector('.message-photo').on('load', e=>{
+
+                    div.querySelector('.message-photo').show();
+                    div.querySelector('._340lu').hide();
+                    div.querySelector('._3v3PK').css({
+                        height: 'auto'
+                    });
+
+
+
+                });
             
             break; 
             
@@ -280,6 +292,39 @@ export class Message extends Model {
 
             return div;
 
+    }
+
+    static sendImage(chatId, from, file){
+
+        return new Promise((s, f)=>{
+
+            let uploadTask = Firebase.hd.ref(from).child(Date.now() + '_' + file.name).put(file);
+    
+            uploadTask.on('state_changed', e=>{
+     
+             console.info('upload', e);
+     
+            }, err => {
+     
+             console.error(err);
+     
+            }, ()=>{
+     
+             Message.send(chatId, from, 'image', uploadTask.snapshot.downloadURL ).then(()=>{
+
+                s();
+
+             });
+     
+            });
+            
+     
+       
+
+        });
+
+      
+  
     }
 
     static send(chatId, from, type, content){
