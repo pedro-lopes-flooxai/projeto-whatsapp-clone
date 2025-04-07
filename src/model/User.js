@@ -1,7 +1,7 @@
     import {Firebase} from './util/Firebase';
     import {Model} from './Model';
 
-    export class user extends Model {
+    export class User extends Model {
 
         constructor(id){
 
@@ -30,7 +30,10 @@
 
                 User.findByEmail(id).onSnapshot(doc=>{
 
+                    this.fromJSON(doc.data());
 
+                    s(doc);
+        
 
                 });
 
@@ -41,7 +44,7 @@
 
         save(){
 
-            return user.findByEmail(this.email).set(this.toJSON());
+            return User.findByEmail(this.email).set(this.toJSON());
 
 
         }
@@ -54,7 +57,9 @@
 
         static getContactRef(id){
 
-            User.getRef().doc(id).collection('contacts')
+            return User.getRef()
+            .doc(id)
+            .collection('contacts');
 
         }
 
@@ -65,8 +70,9 @@
 
         addContact(contact){
 
-            return User.getContactsRef(this.email).doc(btoa(contact.email)).set(contact.toJSON());
-
+            return User.getContactsRef(this.email)
+            .doc(btoa(contact.email))
+            .set(contact.toJSON());
 
         }
 
@@ -88,7 +94,7 @@
                         
                     });
 
-                    this.trigger('contactscharge', docs);
+                    this.trigger('contactschange', docs);
 
                     s(contacts);
 

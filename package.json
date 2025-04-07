@@ -14,7 +14,6 @@
     "build": "webpack --config webpack.config.js",
     "start": "webpack-dev-server"
   },
-  
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pedro-lopes-flooxai/projeto-whatsapp-clone.git"

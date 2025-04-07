@@ -32,7 +32,7 @@ export class WhatsAppController {
             
             this._user =  new User(response.user.email);
 
-            this.user.on('datachange', data => {
+            this._user.on('datachange', data => {
 
                 document.querySelector('tittle').innerHTML = data.name + ' - WhatApp Clone';
 
@@ -135,7 +135,7 @@ export class WhatsAppController {
                 </div>
             `;
 
-            if (contact,photo){
+            if (contact.photo){
                let img = div.querySelector('.photo');
                img.src = contact.photos;
                img.show();
@@ -186,9 +186,9 @@ export class WhatsAppController {
         
             let scrollTop = this.el.panelMessagesContainer.scrollTop;
             let scrollTopMax =
-            this.el.panelMessagesContainer.scrollheight-
+            this.el.panelMessagesContainer.scrollHeight-
             this.el.panelMessagesContainer.offsetHeight;
-            let autoScroll = (scrolltop >= scrollTopMAX);
+            let autoScroll = (scrollTop >= scrollTopMAX);
 
 
 
@@ -270,7 +270,7 @@ export class WhatsAppController {
                 if (autoScroll) {
 
                     this.el.panelMessagesContainer.scrollTop = 
-                    (this.el.panelMessagesContainer.scrollheight-
+                    (this.el.panelMessagesContainer.scrollHeight-
                     this.el.panelMessagesContainer.offsetHeight);
 
                 } else {
@@ -372,13 +372,13 @@ export class WhatsAppController {
 
         this.el.inputSearchContacts.on('keyup', e=>{
 
-            if (this.el.inputSearchContacts.values.length > 0) {
+            if (this.el.inputSearchContacts.value.length > 0) {
                 this.el.inputSearchContactsPlaceholder.hide();
             } else {
                 this.el.inputSearchContactsPlaceholder.show();
             }
 
-            this._user.getContacts(this.el.inputSearchContacts.values);
+            this._user.getContacts(this.el.inputSearchContacts.value);
 
         });
 
@@ -422,7 +422,7 @@ export class WhatsAppController {
         
         this.el.inputProfilePhoto.on('change', e=>{
 
-            if ( this.el.inputProfilePhoto.c.lenght > 0) {
+            if ( this.el.inputProfilePhoto.files.length > 0) {
 
                 let file = this.el.inputProfilePhoto.files[0];
 
@@ -653,7 +653,7 @@ export class WhatsAppController {
        
         this.el.inputDocument.on('change', e=>{
 
-            if (this.el.inputDocument.files.lenght) {
+            if (this.el.inputDocument.files.length) {
 
                 this.el.panelDocumentPreview.css({
                     'height':'1%'
@@ -829,7 +829,7 @@ export class WhatsAppController {
 
         this.el.inputText.on('keyup', e=>{
 
-            if(this.el.inputText.innerHTML.lenght) {
+            if(this.el.inputText.innerHTML.length) {
 
                 this.el.inputPlaceholder.hide();
                 this.el.btnSendMicrophone.hide();

@@ -8,9 +8,9 @@ export class ClassEvent {
 
     on(eventName, fn) {
 
-        if (!this._events[eventName]) this._events[eventNameme] = new Array();
+        if (!this._events[eventName]) this._events[eventName] = new Array();
 
-        this._events[eventName].push(fn);
+        this._events[eventName].push(fn)
 
     }
 

@@ -67,7 +67,7 @@ export class Chat extends Model{
 
                 } else {
 
-                    chat.forEach(chat => {
+                    chats.forEach(chat => {
                         s(chat);
                     });
 
