@@ -55,7 +55,7 @@
 
         }
 
-        static getContactRef(id){
+        static getContactsRef(id){
 
             return User.getRef()
             .doc(id)
