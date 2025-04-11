@@ -1,14 +1,14 @@
 import {Format} from './../util/Format';
 import {CameraController} from './CameraController';
 import {MicrophoneController} from './MicrophoneController';
-import {DocumentPreviewController} from './DocumentPreviewController';
+import {DocumentPreviewController } from './DocumentPreviewController';
 import {Firebase} from './../util/Firebase'
-import {User} from './src/model/User'
+import {User} from './../model/User'
 import {Chat} from './../model/Chat'
 import {Message} from './../model/Message'
-import { Base64 } from "../util/base64"
-import { contactsController } from "../controller/ContactsController"
-import { upload } from '../util/Upload';
+import { Base64 } from './../util/base64'
+import { ContactsController } from "../controller/ContactsController"
+import { Upload } from '../util/Upload';
 
 export class WhatsAppController {
 
@@ -34,7 +34,7 @@ export class WhatsAppController {
 
             this._user.on('datachange', data => {
 
-                document.querySelector('tittle').innerHTML = data.name + ' - WhatApp Clone';
+                document.querySelector('tittle').innerHTML = data.name + ' - WhatsApp Clone';
 
                 this.el.inputNamePanelEditProfile.innerHTML = data.name;
 
@@ -85,6 +85,8 @@ export class WhatsAppController {
 
                 let div = document.createElement('div');
 
+                div.className = "contact-item";
+
                 div.innerHTML = `
                 <div class="dIyEr">
                 <div class="_1WliW" style="height: 49px; width: 49px;">
@@ -104,10 +106,10 @@ export class WhatsAppController {
                 <div class="_3j7s9">
                 <div class="_2FBdJ">
                 <div class="_25Ooe">
-                    <span dir="auto" title="Nome do Contato" class="_1wjpf">${contact.name}</span>
+                    <span dir="auto" title="${contact.name}" class="_1wjpf">${contact.name}</span>
                 </div>
                 <div class="_3Bxar">
-                    <span class="_3T2VG">${Format.fbTimeStampToTime(contact.lastMessageTime)}</span>
+                    <span class="_3T2VG">${Format.timeStampToTime(contact.lastMessageTime)}</span>
                 </div>
                 </div>
                 <div class="_1AwDx">
@@ -188,7 +190,7 @@ export class WhatsAppController {
             let scrollTopMax =
             this.el.panelMessagesContainer.scrollHeight-
             this.el.panelMessagesContainer.offsetHeight;
-            let autoScroll = (scrollTop >= scrollTopMAX);
+            let autoScroll = (scrollTop >= scrollTopMax);
 
 
 
@@ -225,9 +227,9 @@ export class WhatsAppController {
                 } else {
 
     
-                    let parent = this.el.panelMessagesContainer.querySelector('_#' + data.id).parentNode;
+                    let parent = this.el.panelMessagesContainer.querySelector('#_' + data.id).parentNode;
 
-                    parent.replaceChild(view, this.el.panelMessagesContainer.querySelector('_#' + data.id));
+                    parent.replaceChild(view, this.el.panelMessagesContainer.querySelector('#_' + data.id));
 
                 }
                 
@@ -426,7 +428,7 @@ export class WhatsAppController {
 
                 let file = this.el.inputProfilePhoto.files[0];
 
-                upload.send(file, this._user.email).then(onSnapshot=>{
+                Upload.send(file, this._user.email).then(onSnapshot=>{
 
                     this._user.photo = onSnapshot.downloadURL;
                     this._user.save().then(()=>{
@@ -567,7 +569,7 @@ export class WhatsAppController {
 
             let dataUrl = this._camera.takePicture();
 
-            this.el.pictureCamera.src = defaultUrl;
+            this.el.pictureCamera.src = dataUrl;
             this.el.pictureCamera.show();
             this.el.videoCamera.hide();
             this.el.btnReshootPanelCamera.show();
@@ -614,7 +616,7 @@ export class WhatsAppController {
                     this.el.btnSendPicture.disabled = false;
 
                     this.closeAllMainPanel(); 
-                    this.el._camera.stop(); 
+                    this._camera.stop(); 
                     this.el.btnReshootPanelCamera.hide(); 
                     this.el.pictureCamera.hide(); 
                     this.el.videoCamera.show(); 
@@ -661,7 +663,7 @@ export class WhatsAppController {
 
                 let file = this.el.inputDocument.files[0];
 
-                this._documentPreviewController = new documentPreviewController(file);
+                this._documentPreviewController = new DocumentPreviewController(file);
 
                 this._documentPreviewController.getPreviewData().then(result=>{
 
@@ -742,7 +744,7 @@ export class WhatsAppController {
 
         this.el.btnAttachContact.on('click', e=>{
  
-            this._contactsController = new contactsController(this.el.modalContacts, this._user);
+            this._contactsController = new ContactsController(this.el.modalContacts, this._user);
 
             this._contactsController.on('select', contact =>{
 

@@ -1,4 +1,4 @@
-    import {Firebase} from './util/Firebase';
+    import {Firebase} from '../util/Firebase';
     import {Model} from './Model';
 
     export class User extends Model {
